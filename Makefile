@@ -6,7 +6,7 @@
 #    By: rwegat <rwegat@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/27 15:12:45 by rwegat            #+#    #+#              #
-#    Updated: 2023/11/27 15:25:46 by rwegat           ###   ########.fr        #
+#    Updated: 2023/11/29 15:27:17 by rwegat           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ CFLAGS = -Wall -Wextra -Werror
 NAME = get_next_line.a
 
 CFILES = get_next_line.c get_next_line_utils.c
-OFILES = $(CFILES: .c=.o)
+OFILES = $(CFILES:.c=.o)
 
 all: $(NAME)
 $(NAME) : $(OFILES)

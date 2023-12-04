@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: rwegat <rwegat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/27 15:51:45 by rwegat            #+#    #+#             */
-/*   Updated: 2023/11/27 16:34:05 by rwegat           ###   ########.fr       */
+/*   Created: 2023/12/04 15:27:22 by rwegat            #+#    #+#             */
+/*   Updated: 2023/12/04 16:39:23 by rwegat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,16 @@ int	main(void)
 {
 	int		fd;
 	char	*line;
-	int		lines;
 
-	lines = 1;
-	fd = open("file.txt", O_RDONLY);
-	while ((line = get_next_line(fd)) != NULL)
-		printf("%d. Line: %s\n", lines++, line);
+	fd = open("/Users/rwegat/repository/GetNextLine/test_file.text", O_RDONLY);
+	if (fd < 0)
+	{
+		perror("Error opening file");
+		return (1);
+	}
+	line = get_next_line(fd);
+	printf("Line: %s\n", line);
+	free(line);
+	close(fd);
+	return (0);
 }
