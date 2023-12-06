@@ -6,7 +6,7 @@
 /*   By: rwegat <rwegat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 19:23:48 by rwegat            #+#    #+#             */
-/*   Updated: 2023/12/04 16:40:28 by rwegat           ###   ########.fr       */
+/*   Updated: 2023/12/06 16:23:38 by rwegat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,41 +42,65 @@ void	lst_add_back(t_list **list, char *buf)
 
 int	find_newline(t_list *list)
 {
+	int	i;
+
 	while (list)
 	{
-		if (strchr(list->str_buf, '\n'))
-			return (1);
-		list = list->next;
+		i = 0;
+		while (i < BUFFER_SIZE && list -> str_buf[i] != '\n')
+		{
+			if (list -> str_buf[i] == '\n')
+				return (1);
+			i++;
+		}
+		list = list -> next;
 	}
 	return (0);
 }
 
-//replace strcpy 
 void	copy_str(t_list *list, char *next_str)
 {
+	int	list_counter;
+	int	str_counter;
+
+	str_counter = 0;
 	while (list)
 	{
-		strcpy(next_str, list->str_buf);
-		next_str += strlen(list->str_buf);
+		list_counter = 0;
+		while (list -> str_buf[list_counter] != '\n')
+		{
+			next_str[str_counter] = list -> str_buf[list_counter];
+			str_counter++;
+			list_counter++;
+		}
+		if (list -> str_buf[list_counter] == '\n')
+			next_str[str_counter++] = '\n';
 		list = list->next;
 	}
-	*next_str = '\0';
+	next_str[str_counter] = '\0';
 }
 
-void	free_all_but_last(t_list **list)
+void	free_list(t_list **list, t_list *clean_node, char *buf)
 {
-	t_list	*temp;
 	t_list	*current;
+	t_list	*next;
 
-	if (*list == NULL || (*list)->next == NULL)
+	if (*list == NULL)
 		return ;
 	current = *list;
-	while (current->next != NULL)
+	while (current != NULL)
 	{
-		temp = current;
-		current = current->next;
-		free(temp->str_buf);
-		free(temp);
+		free(current->str_buf);
+		next = current->next;
+		free (current);
+		current = next;
 	}
-	current->next = NULL;
+	*list = NULL;
+	if (clean_node->str_buf[0])
+		*list = clean_node;
+	else
+	{
+		free(buf);
+		free(clean_node);
+	}
 }

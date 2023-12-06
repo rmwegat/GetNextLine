@@ -6,7 +6,7 @@
 /*   By: rwegat <rwegat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 19:21:19 by rwegat            #+#    #+#             */
-/*   Updated: 2023/12/04 16:35:38 by rwegat           ###   ########.fr       */
+/*   Updated: 2023/12/06 16:24:32 by rwegat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,21 +74,44 @@ void	create_list(t_list **list, int fd)
 	}
 }
 
+void	free_upto_newline(t_list **list)
+{
+	t_list	*temp;
+	t_list	*new_node;
+	int		i;
+	int		len;
+	char	*buf;
+
+	if (*list == NULL)
+		return ;
+	buf = malloc(BUFFER_SIZE + 1);
+	new_node = malloc(sizeof(t_list));
+	if (!buf || !new_node)
+		return ;
+	new_node = find_last(*list);
+	i = 0;
+	len = 0;
+	while (new_node->str_buf[len] && new_node->str_buf[i] != '\n')
+		len++;
+	while (new_node->str_buf[i] && new_node->str_buf[i++])
+		buf[i++] = new_node->str_buf[len];
+	buf[i] = '\0';
+	temp->str_buf = buf;
+	temp->next = NULL;
+	free_list(list, temp, buf);
+}
+
 char	*get_next_line(int fd)
 {
-	printf("a\n");
 	static t_list	*list;
 	char			*next_line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, &next_line, 0) < 0)
 		return (NULL);
-	printf("b\n");
 	create_list(&list, fd);
-	printf("c\n");
 	if (!list)
 		return (NULL);
 	next_line = get_line(list);
-	printf("d\n");
 	free_all_but_last(&list);
 	return (next_line);
 }

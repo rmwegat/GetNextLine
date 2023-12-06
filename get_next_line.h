@@ -6,7 +6,7 @@
 /*   By: rwegat <rwegat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 15:07:41 by rwegat            #+#    #+#             */
-/*   Updated: 2023/11/30 19:26:23 by rwegat           ###   ########.fr       */
+/*   Updated: 2023/12/06 16:26:31 by rwegat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,6 @@ t_list	*find_lstlast(t_list *lst);
 void	lst_add_back(t_list **list, char *buf);
 int		find_newline(t_list *list);
 void	copy_str(t_list *list, char *next_str);
-void	free_all_but_last(t_list **list);
+void	free_list(t_list **list, t_list *clean_node, char *buf);
 
 #endif
