@@ -6,7 +6,7 @@
 /*   By: rwegat <rwegat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 19:21:19 by rwegat            #+#    #+#             */
-/*   Updated: 2023/12/06 16:24:32 by rwegat           ###   ########.fr       */
+/*   Updated: 2023/12/07 19:22:57 by rwegat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	get_line_len(t_list *list)
 		i = 0;
 		while (list -> str_buf[i])
 		{
-			if (list -> str_buf[i] != '\n')
+			if (list -> str_buf[i] == '\n')
 			{
 				len++;
 				return (len);
@@ -38,7 +38,7 @@ int	get_line_len(t_list *list)
 	return (len);
 }
 
-char	*get_line(t_list *list)
+char	*get_one_line(t_list *list)
 {
 	char	*next_str;
 	int		str_len;
@@ -58,7 +58,7 @@ void	create_list(t_list **list, int fd)
 	int		chars_read;
 	char	*buf;
 
-	while (find_newline(*list) == 0)
+	while (!find_newline(*list))
 	{
 		buf = malloc(BUFFER_SIZE + 1);
 		if (!buf)
@@ -76,29 +76,27 @@ void	create_list(t_list **list, int fd)
 
 void	free_upto_newline(t_list **list)
 {
-	t_list	*temp;
-	t_list	*new_node;
-	int		i;
-	int		len;
+	t_list	*last_node;
+	t_list	*clean_node;
+	int		old_str;
+	int		new_str;
 	char	*buf;
 
-	if (*list == NULL)
-		return ;
 	buf = malloc(BUFFER_SIZE + 1);
-	new_node = malloc(sizeof(t_list));
-	if (!buf || !new_node)
+	clean_node = malloc(sizeof(t_list));
+	if (NULL == buf || NULL == clean_node)
 		return ;
-	new_node = find_last(*list);
-	i = 0;
-	len = 0;
-	while (new_node->str_buf[len] && new_node->str_buf[i] != '\n')
-		len++;
-	while (new_node->str_buf[i] && new_node->str_buf[i++])
-		buf[i++] = new_node->str_buf[len];
-	buf[i] = '\0';
-	temp->str_buf = buf;
-	temp->next = NULL;
-	free_list(list, temp, buf);
+	last_node = find_last(*list);
+	old_str = 0;
+	new_str = 0;
+	while (last_node->str_buf[old_str] && last_node->str_buf[old_str] != '\n')
+		old_str++;
+	while (last_node->str_buf[old_str] && last_node->str_buf[old_str++])
+		buf[new_str++] = last_node->str_buf[old_str];
+	buf[new_str] = '\0';
+	clean_node->str_buf = buf;
+	clean_node->next = NULL;
+	free_list(list, clean_node, buf);
 }
 
 char	*get_next_line(int fd)
@@ -111,7 +109,7 @@ char	*get_next_line(int fd)
 	create_list(&list, fd);
 	if (!list)
 		return (NULL);
-	next_line = get_line(list);
-	free_all_but_last(&list);
+	next_line = get_one_line(list);
+	free_upto_newline(&list);
 	return (next_line);
 }

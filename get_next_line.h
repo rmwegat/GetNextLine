@@ -6,7 +6,7 @@
 /*   By: rwegat <rwegat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 15:07:41 by rwegat            #+#    #+#             */
-/*   Updated: 2023/12/06 16:26:31 by rwegat           ###   ########.fr       */
+/*   Updated: 2023/12/07 18:51:56 by rwegat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ typedef struct s_list
 
 char	*get_next_line(int fd);
 
-t_list	*find_lstlast(t_list *lst);
+t_list	*find_last(t_list *lst);
 void	lst_add_back(t_list **list, char *buf);
 int		find_newline(t_list *list);
 void	copy_str(t_list *list, char *next_str);

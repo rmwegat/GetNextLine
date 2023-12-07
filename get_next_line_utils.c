@@ -6,7 +6,7 @@
 /*   By: rwegat <rwegat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 19:23:48 by rwegat            #+#    #+#             */
-/*   Updated: 2023/12/06 16:23:38 by rwegat           ###   ########.fr       */
+/*   Updated: 2023/12/07 19:14:01 by rwegat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,7 @@ void	lst_add_back(t_list **list, char *buf)
 	if (!new_node)
 		return ;
 	if (!last_node)
-	{
 		*list = new_node;
-	}
 	else
 		last_node -> next = new_node;
 	new_node -> str_buf = buf;
@@ -44,40 +42,46 @@ int	find_newline(t_list *list)
 {
 	int	i;
 
+	if (NULL == list)
+		return (0);
 	while (list)
 	{
 		i = 0;
-		while (i < BUFFER_SIZE && list -> str_buf[i] != '\n')
+		while (list->str_buf[i] && i < BUFFER_SIZE)
 		{
-			if (list -> str_buf[i] == '\n')
+			if (list->str_buf[i] == '\n')
 				return (1);
-			i++;
+			++i;
 		}
-		list = list -> next;
+		list = list->next;
 	}
 	return (0);
 }
 
-void	copy_str(t_list *list, char *next_str)
+void	copy_str(t_list *list, char *str)
 {
 	int	list_counter;
 	int	str_counter;
 
 	str_counter = 0;
+	if (!list)
+		return ;
 	while (list)
 	{
 		list_counter = 0;
-		while (list -> str_buf[list_counter] != '\n')
+		while (list->str_buf[list_counter])
 		{
-			next_str[str_counter] = list -> str_buf[list_counter];
-			str_counter++;
-			list_counter++;
+			if (list->str_buf[list_counter] == '\n')
+			{
+				str[str_counter++] = '\n';
+				str[str_counter] = '\0';
+				return ;
+			}
+			str[str_counter++] = list->str_buf[list_counter++];
 		}
-		if (list -> str_buf[list_counter] == '\n')
-			next_str[str_counter++] = '\n';
 		list = list->next;
 	}
-	next_str[str_counter] = '\0';
+	str[str_counter] = '\0';
 }
 
 void	free_list(t_list **list, t_list *clean_node, char *buf)
@@ -88,10 +92,10 @@ void	free_list(t_list **list, t_list *clean_node, char *buf)
 	if (*list == NULL)
 		return ;
 	current = *list;
-	while (current != NULL)
+	while (current)
 	{
-		free(current->str_buf);
 		next = current->next;
+		free(current->str_buf);
 		free (current);
 		current = next;
 	}
