@@ -6,7 +6,7 @@
 /*   By: rwegat <rwegat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 19:23:48 by rwegat            #+#    #+#             */
-/*   Updated: 2023/12/07 19:14:01 by rwegat           ###   ########.fr       */
+/*   Updated: 2023/12/11 17:06:04 by rwegat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,11 +96,13 @@ void	free_list(t_list **list, t_list *clean_node, char *buf)
 	{
 		next = current->next;
 		free(current->str_buf);
-		free (current);
+		free(current);
 		current = next;
 	}
 	*list = NULL;
-	if (clean_node->str_buf[0])
+	if (!clean_node || !buf)
+		return ;
+	if (clean_node->str_buf[0] && clean_node)
 		*list = clean_node;
 	else
 	{

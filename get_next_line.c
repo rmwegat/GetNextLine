@@ -6,11 +6,32 @@
 /*   By: rwegat <rwegat@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 19:21:19 by rwegat            #+#    #+#             */
-/*   Updated: 2023/12/07 19:22:57 by rwegat           ###   ########.fr       */
+/*   Updated: 2023/12/11 17:04:17 by rwegat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+void	create_list(t_list **list, int fd)
+{
+	int		chars_read;
+	char	*buf;
+
+	while (!find_newline(*list))
+	{
+		buf = malloc(BUFFER_SIZE + 1);
+		if (!buf)
+			return ;
+		chars_read = read(fd, buf, BUFFER_SIZE);
+		if (!chars_read)
+		{
+			free(buf);
+			return ;
+		}
+		buf[chars_read] = '\0';
+		lst_add_back(list, buf);
+	}
+}
 
 int	get_line_len(t_list *list)
 {
@@ -53,27 +74,6 @@ char	*get_one_line(t_list *list)
 	return (next_str);
 }
 
-void	create_list(t_list **list, int fd)
-{
-	int		chars_read;
-	char	*buf;
-
-	while (!find_newline(*list))
-	{
-		buf = malloc(BUFFER_SIZE + 1);
-		if (!buf)
-			return ;
-		chars_read = read(fd, buf, BUFFER_SIZE);
-		if (!chars_read)
-		{
-			free(buf);
-			return ;
-		}
-		buf[chars_read] = '\0';
-		lst_add_back(list, buf);
-	}
-}
-
 void	free_upto_newline(t_list **list)
 {
 	t_list	*last_node;
@@ -104,12 +104,20 @@ char	*get_next_line(int fd)
 	static t_list	*list;
 	char			*next_line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, &next_line, 0) < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
+	if (read(fd, &next_line, 0) < 0)
+	{
+		free_list(&list, NULL, NULL);
+		return (NULL);
+	}
 	create_list(&list, fd);
 	if (!list)
 		return (NULL);
 	next_line = get_one_line(list);
-	free_upto_newline(&list);
+	if (!next_line && list)
+		free_list(&list, NULL, NULL);
+	else
+		free_upto_newline(&list);
 	return (next_line);
 }
